@@ -1,0 +1,110 @@
+ZikrAi Project Report
+
+1. Overview
+- Purpose: ZikrAi is an Islamic Knowledge Assistant that answers user queries using curated Quran and Hadith passages. It performs retrieval-augmented generation (RAG) to find relevant sources and optionally generates answers via an LLM.
+- Key Features:
+  - Hybrid retrieval: fine-tuned embeddings with FAISS, sentence-transformers similarity, TF‑IDF, and keyword overlap
+  - Query-aware prioritization (prophet/topic detection)
+  - Frontend with improved readability, dark mode toggle, font-size controls, sources preview and copy
+  - Lightweight Flask backend with REST API
+
+2. Repository Structure
+- backend/
+  - app.py: Flask server, routes for health, stats, ask; integrates RAG and optional OpenAI answer
+  - rag_utils_inference.py: Loads data chunks, embeddings, FAISS index; provides search across ensemble methods and heuristics
+  - data/: hadith and quran JSONL chunks
+  - fine_tuned_embeddings/: precomputed embeddings and FAISS index files
+  - requirements.txt: Python dependencies
+- frontend/
+  - index.html: Main UI page
+  - static/css/style.css: Styling, themes, layout
+  - static/js/app.js: Client logic, API calls, chat rendering, UI controls
+- scripts/: data processing helpers
+
+3. System Architecture
+- Data Layer: Pre-split Quran and Hadith chunks in JSONL; precomputed embeddings (NumPy .npy) indexed by FAISS (.bin)
+- Retrieval Layer:
+  - FAISS: vector index over fine-tuned embeddings for fast nearest neighbor search
+  - Sentence-Transformers (all-mpnet-base-v2): encodes queries; combined via dot similarity with stored embeddings
+  - TF‑IDF: sklearn TfidfVectorizer over chunk texts; cosine similarity for lexical matching
+  - Keywords: simple word overlap fallback
+- Ensemble Fusion:
+  - Weighted combination of FAISS, ST, TF‑IDF, and keyword scores (defaults 0.5, 0.3, 0.15, 0.05)
+  - Dynamic heuristic adjustment by query length (boost TF‑IDF/keywords for short queries; boost ST/FAISS for long queries)
+- Routing & API:
+  - /api/health: status, model availability
+  - /api/stats: chunk counts and availability
+  - /api/ask: main endpoint; receives query (and optional strategy), returns answer and sources
+- Frontend:
+  - Chat-style interface; quick topic buttons; dark theme; font-size controls
+  - Sources preview with expandable text; copy button for responses
+  - Toast notifications and loading overlay
+
+4. Setup & Installation
+- Prerequisites: Python 3.13 (or compatible), Windows PowerShell
+- Create/Activate venv:
+  - Set-Location "C:\Users\zaigh\OneDrive\Desktop\ZikrAi2\ai"
+  - python -m venv .venv
+  - . ".\.venv\Scripts\Activate.ps1"
+- Install dependencies:
+  - .\.venv\Scripts\python.exe -m pip install --upgrade pip
+  - .\.venv\Scripts\python.exe -m pip install -r ".\backend\requirements.txt"
+
+5. Running the Application
+- Start Flask backend:
+  - Set-Location "C:\Users\zaigh\OneDrive\Desktop\ZikrAi2\ai\backend"
+  - python .\app.py
+- Open Frontend:
+  - Visit http://localhost:5000
+- Optional: Serve static frontend only (no backend)
+  - Set-Location "C:\Users\zaigh\OneDrive\Desktop\ZikrAi2\ai\frontend"
+  - python -m http.server 5500
+  - Browser: http://localhost:5500
+
+6. Configuration
+- OpenAI (optional): set environment variable OPENAI_API_KEY for LLM answers in backend/app.py
+- Ensemble Weights (optional): via env variables
+  - ENSEMBLE_W_FAISS (default 0.5)
+  - ENSEMBLE_W_ST (default 0.3)
+  - ENSEMBLE_W_TFIDF (default 0.15)
+  - ENSEMBLE_W_KW (default 0.05)
+- Strategy Override (optional): pass ?strategy=faiss|st|tfidf|keywords to /api/ask to force a single method; default is ensemble with dynamic weighting
+
+7. Data & Models
+- Data: `backend/data/hadith_chunks.jsonl`, `backend/data/quran_combined_chunks.jsonl`
+- Embeddings: `backend/fine_tuned_embeddings/embeddings.npy`
+- Index: `backend/fine_tuned_embeddings/faiss_index.bin`
+- Query Encoder: `sentence-transformers/all-mpnet-base-v2`
+
+8. Frontend UX Enhancements
+- Dark Theme: toggle persists via localStorage; tuned button contrast
+- Readability Controls: A+/A− font-size buttons (14–22px) with persistence
+- Sources: Show more/less expandable previews; list with references
+- Copy: Button to copy full assistant response text
+- Toasts: Success/error notifications for actions
+- Loading: Overlay instead of chat-inserted messages
+
+9. Limitations
+- Data Dependence: Requires presence of precomputed embeddings and FAISS index; otherwise falls back to lexical methods
+- LLM Optional: Without OPENAI_API_KEY, backend returns a structured answer using retrieved passages but not generative text
+- Windows-specific notes: Some packages (e.g., FAISS, Torch) rely on platform-specific wheels; verified CPU builds
+
+10. Testing & Verification
+- Import Checks: Verified installation of Flask, numpy, faiss-cpu, sentence-transformers, scikit-learn, torch, transformers
+- Backend Boot: Run `python backend/app.py` from the backend directory so relative paths resolve (`backend/data/...`)
+- Health & Stats: GET /api/health and /api/stats
+- Ask Endpoint: POST /api/ask with JSON {"query": "Who is Yusuf?", "k": 5}
+
+11. Acknowledgements
+- Libraries: Flask, FAISS, sentence-transformers, scikit-learn, Torch, Transformers
+- Quran/Hadith sources: curated dataset provided in project; external references:
+  - Hadith API: https://github.com/fawazahmed0/hadith-api
+  - Quran JSON: https://github.com/semarketir/quranjson
+
+Appendix: Quick Commands (PowerShell)
+
+Set-Location "C:\Users\zaigh\OneDrive\Desktop\ZikrAi2\ai"
+. ".\.venv\Scripts\Activate.ps1"
+.\.venv\Scripts\python.exe -m pip install -r ".\backend\requirements.txt"
+Set-Location ".\backend"
+python .\app.py

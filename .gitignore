@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# VS Code
+.vscode/
+
+# Environment files
+.env
+.env.*
+
+# Large data & generated artifacts
+backend/data/
+backend/embeddings/
+backend/fine_tuned_embeddings/
+backend/tfidf_model/
+backend/*.bin
+backend/*.npy
+
+# Logs
+*.log
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Frontend build caches (if added later)
+dist/
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

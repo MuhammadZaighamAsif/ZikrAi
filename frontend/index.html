@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZikrAi - Islamic Knowledge Assistant</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🕌</span>
+                <h1>ZikrAi</h1>
+            </div>
+            <p class="tagline">Islamic Knowledge Assistant • Quran & Hadith</p>
+            <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">🌙 Dark</button>
+            <div class="readability-controls" title="Text size">
+                <button id="fontDec" class="readability-btn" aria-label="Decrease font size">A−</button>
+                <button id="fontInc" class="readability-btn" aria-label="Increase font size">A+</button>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat">
+                <span class="stat-label">Total Sources:</span>
+                <span class="stat-value" id="totalChunks">--</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Quran:</span>
+                <span class="stat-value" id="quranChunks">--</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Hadith:</span>
+                <span class="stat-value" id="hadithChunks">--</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value status-indicator" id="status">●</span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-btn" data-question="What does the Quran say about patience?">
+                <span class="quick-icon">⏳</span>
+                <span>Patience</span>
+            </button>
+            <button class="quick-btn" data-question="Tell me about prayer in Islam">
+                <span class="quick-icon">🤲</span>
+                <span>Prayer</span>
+            </button>
+            <button class="quick-btn" data-question="What are the five pillars of Islam?">
+                <span class="quick-icon">☪️</span>
+                <span>Pillars</span>
+            </button>
+            <button class="quick-btn" data-question="What does Islam teach about charity?">
+                <span class="quick-icon">💚</span>
+                <span>Charity</span>
+            </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Message -->
+            <div class="message bot-message">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">ZikrAi Assistant</span>
+                        <span class="message-time" id="welcomeTime"></span>
+                    </div>
+                    <p class="intro"><strong>السلام عليكم ورحمة الله وبركاته</strong></p>
+                    <p class="intro">Peace be upon you! Welcome to ZikrAi.</p>
+                    <p class="intro">I'm your Islamic Knowledge Assistant, here to help you explore the wisdom of the Quran and Hadith. Simply type your question below or click one of the quick topic buttons above!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <form id="queryForm">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="queryInput" 
+                        placeholder="Type your question here... (Press Enter to send, Shift+Enter for new line)"
+                        rows="1"
+                        maxlength="500"
+                    ></textarea>
+                    <span class="char-counter" id="charCounter">0/500</span>
+                </div>
+                <div class="button-group">
+                    <button type="button" id="clearBtn" class="secondary-btn" title="Clear conversation">
+                        <span>🗑️</span>
+                    </button>
+                    <button type="submit" id="submitBtn">
+                        <span class="btn-text">Send</span>
+                        <span class="btn-icon">📤</span>
+                    </button>
+                </div>
+            </form>
+            <div class="input-footer">
+                <span class="footer-icon">🔒</span>
+                <small>Project by Zaigham, Abdul Hannan, Armgan, Abdullah and Hassan</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Searching Islamic sources...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="static/js/app.js"></script>
+</body>
+</html>
