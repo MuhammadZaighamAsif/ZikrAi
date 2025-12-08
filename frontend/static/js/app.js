@@ -1,7 +1,7 @@
 // API Base URL
 const API_BASE = window.location.origin;
 
-// DOM Elements
+// DOM Elements Operation
 const chatContainer = document.getElementById('chatContainer');
 const queryForm = document.getElementById('queryForm');
 const queryInput = document.getElementById('queryInput');
@@ -11,14 +11,15 @@ const themeToggle = document.getElementById('themeToggle');
 const fontInc = document.getElementById('fontInc');
 const fontDec = document.getElementById('fontDec');
 
-// Stats elements
+// Stats elements Functionality
 const totalChunks = document.getElementById('totalChunks');
 const quranChunks = document.getElementById('quranChunks');
 const hadithChunks = document.getElementById('hadithChunks');
 const statusIndicator = document.getElementById('status');
 const toastContainer = document.getElementById('toastContainer');
 
-// Initialize
+
+// Initialization of starting
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     setupEventListeners();
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCharCounter();
     initTheme();
     
-    // Allow Shift+Enter for new line, Enter to submit
+    //  Enter to submit, Allow Shift+Enter for new line
     queryInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -34,28 +35,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Character counter
+    //  counter for Character
     queryInput.addEventListener('input', () => {
         updateCharCounter();
         autoResize();
     });
 });
 
-// Update character counter
-function updateCharCounter() {
-    const charCounter = document.getElementById('charCounter');
-    if (charCounter) {
-        const length = queryInput.value.length;
-        charCounter.textContent = `${length}/500`;
-        charCounter.style.color = length > 450 ? '#EF4444' : '#6B7280';
-    }
-}
 
 // Auto-resize textarea
 function autoResize() {
     queryInput.style.height = 'auto';
     queryInput.style.height = Math.min(queryInput.scrollHeight, 120) + 'px';
 }
+
 
 // Update welcome time
 function updateWelcomeTime() {
@@ -66,6 +59,16 @@ function updateWelcomeTime() {
             hour: '2-digit', 
             minute: '2-digit' 
         });
+    }
+}
+
+// Update character counter
+function updateCharCounter() {
+    const charCounter = document.getElementById('charCounter');
+    if (charCounter) {
+        const length = queryInput.value.length;
+        charCounter.textContent = `${length}/500`;
+        charCounter.style.color = length > 450 ? '#EF4444' : '#6B7280';
     }
 }
 
@@ -124,7 +127,7 @@ function setupEventListeners() {
         });
     }
 
-    // Theme toggle
+    // Theme toggle 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             const isDark = document.body.classList.toggle('dark');
@@ -133,7 +136,7 @@ function setupEventListeners() {
         });
     }
 
-    // Font size controls
+    // Font size controls 
     const applyFontSize = (size) => {
         document.documentElement.style.setProperty('--message-font-size', `${size}px`);
         localStorage.setItem('zikrai_font_size', String(size));
@@ -154,7 +157,7 @@ function setupEventListeners() {
     }
 }
 
-// Add welcome message
+// Add welcome message function
 function addWelcomeMessage() {
     const welcomeDiv = document.createElement('div');
     welcomeDiv.className = 'message bot-message';
@@ -318,7 +321,6 @@ function addMessage(text, type, sources = null) {
 function createSourcesDiv(sources) {
     const sourcesDiv = document.createElement('div');
     sourcesDiv.className = 'sources';
-    
     const header = document.createElement('div');
     header.className = 'sources-header';
     header.innerHTML = '📚 Sources Used:';
@@ -327,7 +329,6 @@ function createSourcesDiv(sources) {
     sources.forEach((source, index) => {
         const sourceItem = document.createElement('div');
         sourceItem.className = 'source-item';
-
         const reference = document.createElement('div');
         reference.className = 'source-reference';
         reference.textContent = `${index + 1}. ${source.source}`;
@@ -338,6 +339,7 @@ function createSourcesDiv(sources) {
         const preview = fullText.substring(0, 180) + (fullText.length > 180 ? '…' : '');
         text.textContent = preview;
 
+        
         // Expand/collapse control
         if (fullText.length > 180) {
             const toggle = document.createElement('button');
@@ -353,16 +355,15 @@ function createSourcesDiv(sources) {
             });
             text.appendChild(toggle);
         }
-
         sourceItem.appendChild(reference);
         sourceItem.appendChild(text);
         sourcesDiv.appendChild(sourceItem);
     });
-    
     return sourcesDiv;
 }
 
-// Set loading state
+
+// setting loading state
 function setLoading(isLoading) {
     if (isLoading) {
         // add skeleton message for perceived loading
@@ -392,7 +393,7 @@ function setLoading(isLoading) {
     }
 }
 
-// Toast helper
+// Toast helper function
 function showToast(message, type = 'success') {
     if (!toastContainer) return;
     const toast = document.createElement('div');
@@ -404,3 +405,62 @@ function showToast(message, type = 'success') {
         toast.remove();
     }, 2000);
 }
+
+
+function setupEventListen() {
+    queryForm.addEventListener('submit', handleSubmit);
+    
+    // Quick action buttons
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const question = btn.dataset.question;
+            queryInput.value = question;
+            queryInput.focus();
+            updateCharCounter();
+            autoResize();
+            showToast('Loaded quick question', 'success');
+        });
+    });
+    
+    // Clear button
+    const clearBtn = document.getElementById('clearBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Clear the conversation?')) {
+                chatContainer.innerHTML = '';
+                addWelcomeMessage();
+                showToast('Conversation cleared', 'success');
+            }
+        });
+    }
+
+    // Theme toggle 
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('zikrai_theme', isDark ? 'dark' : 'light');
+            themeToggle.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+        });
+    }
+
+    // Font size controls 
+    const applyFontSize = (size) => {
+        document.documentElement.style.setProperty('--message-font-size', `${size}px`);
+        localStorage.setItem('zikrai_font_size', String(size));
+    };
+    const currentSize = parseInt(localStorage.getItem('zikrai_font_size') || '16', 10);
+    applyFontSize(currentSize);
+    if (fontInc) {
+        fontInc.addEventListener('click', () => {
+            const size = Math.min((parseInt(localStorage.getItem('zikrai_font_size') || '16', 10) + 1), 22);
+            applyFontSize(size);
+        });
+    }
+    if (fontDec) {
+        fontDec.addEventListener('click', () => {
+            const size = Math.max((parseInt(localStorage.getItem('zikrai_font_size') || '16', 10) - 1), 14);
+            applyFontSize(size);
+        });
+    }
+}
+
