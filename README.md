@@ -69,6 +69,6 @@ Frontend:
 - For a quick demo, add small sample chunks under `backend\data\` locally.
 
 ## Acknowledgements
-- Hadith references: public Hadith APIs (e.g., hadith-api projects).
-- Quran text: public Quran JSON repositories (e.g., quranjson).
+- Hadith: data sourced via public Hadith API projects such as `https://github.com/swmohammad/hadith-api` and similar community-maintained resources.
+- Quran: text/metadata from public Quran JSON repositories such as `https://github.com/semarketir/quranjson`.
 
