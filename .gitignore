@@ -16,7 +16,12 @@ ENV/
 .env.*
 
 # Large data & generated artifacts
+# Data (include requested datasets)
+!backend/hadith_pairs.jsonl
+!backend/quran_pairs.jsonl
 backend/data/
+
+# Large generated artifacts (still excluded)
 backend/embeddings/
 backend/fine_tuned_embeddings/
 backend/tfidf_model/
